@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: *');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$baseUrl = '/plays'; // Add this to match your web server configuration
 $directory = 'audio/alusra';
 $files = [];
 $audio_extensions = ['mp3'];
