@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>دروس بتدكصهك</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="دروس بتدكصهك">
+    <meta name="apple-mobile-web-app-title" content="دروس بتدكصهك">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="msapplication-starturl" content="./">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512x512.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        .app-header {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-content {
+            height: 100%;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .app-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .header-text {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+        }
+
+        .app-subtitle {
+            margin: 0;
+            font-size: 1.1em;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .app-header {
+                height: 250px;
+            }
+            
+            .app-subtitle {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header {
+                height: 150px;
+            }
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 95%;
+        }
+
+        .section-card {
+            background: linear-gradient(145deg, #2a2a2a, #222222);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+            text-decoration: none;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 7px 7px 20px rgba(0,0,0,0.4);
+            background: linear-gradient(145deg, #323232, #282828);
+        }
+
+        .section-icon {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+        }
+
+        .section-card:hover .section-icon {
+            transform: scale(1.1);
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            background: #2a2a2a;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        /* Tablets */
+        @media (max-width: 1024px) {
+            .sections-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                width: 90%;
+            }
+
+            .section-card {
+                min-height: 150px;
+            }
+
+            .section-icon {
+                font-size: 2.5em;
+                width: 70px;
+                height: 70px;
+            }
+
+            .app-title {
+                font-size: 2.2em;
+            }
+        }
+
+        /* Large Phones */
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .section-card {
+                min-height: 140px;
+                padding: 20px 10px;
+            }
+
+            .section-icon {
+                font-size: 2.3em;
+                width: 60px;
+                height: 60px;
+                margin-bottom: 12px;
+            }
+
+            .section-title {
+                font-size: 1.1em;
+            }
+
+            .app-title {
+                font-size: 2em;
+            }
+
+            .app-subtitle {
+                font-size: 1em;
+            }
+
+            .app-logo {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Small Phones */
+        @media (max-width: 480px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+                width: 85%;
+            }
+
+            .section-card {
+                min-height: 130px;
+            }
+
+            .app-header {
+                padding: 30px 15px;
+            }
+
+            .app-title {
+                font-size: 1.8em;
+            }
+
+            .app-subtitle {
+                font-size: 0.9em;
+            }
+
+            .section-icon {
+                font-size: 2.2em;
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        /* Extra Small Phones */
+        @media (max-width: 320px) {
+            .sections-grid {
+                width: 90%;
+                padding: 10px;
+            }
+
+            .section-card {
+                min-height: 120px;
+                padding: 15px 10px;
+            }
+
+            .app-title {
+                font-size: 1.6em;
+            }
+
+            .section-title {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <img src="icons/logo.png" alt="دروس بتدكصهك" class="app-logo">
+        </div>
+    </header>
+
+    <main class="sections-grid">
+        <a href="page1.html" class="section-card">
+            <div class="section-icon">📚</div>
+            <h2 class="section-title">العقيدة</h2>
+        </a>
+
+        <a href="page2.html" class="section-card">
+            <div class="section-icon">⚖️</div>
+            <h2 class="section-title">الفقه</h2>
+        </a>
+
+        <a href="page3.html" class="section-card">
+            <div class="section-icon">📖</div>
+            <h2 class="section-title">التفسير</h2>
+        </a>
+
+        <a href="page4.html" class="section-card">
+            <div class="section-icon">🕌</div>
+            <h2 class="section-title">السيرة</h2>
+        </a>
+
+        <!-- <a href="page5.html" class="section-card">
+            <div class="section-icon">🤝</div>
+            <h2 class="section-title">الآداب والأخلاق</h2>
+        </a> -->
+
+        <a href="page6.html" class="section-card">
+            <div class="section-icon">👪</div>
+            <h2 class="section-title">الأسرة</h2>
+        </a>
+
+        <a href="page7.html" class="section-card">
+            <div class="section-icon">📑</div>
+            <h2 class="section-title">منوعات</h2>
+        </a>
+    </main>
+
+    <footer>
+        جميع الحقوق محفوظة &copy; 2024
+    </footer>
+
+    <!-- Install Button Container -->
+    <div id="installContainer" class="install-prompt" style="display: none; position: fixed; bottom: 20px; left: 0; right: 0; text-align: center; z-index: 1000;">
+        <button id="installButton" style="background: #000; color: white; border: none; padding: 15px 30px; border-radius: 25px; font-family: 'Tajawal', sans-serif; font-size: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            تثبيت التطبيق على هاتفك
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('service-worker.js', {
+                        scope: './'
+                    });
+                    console.log('ServiceWorker registration successful');
+                } catch (error) {
+                    console.log('ServiceWorker registration failed:', error);
+                }
+            });
+        }
+
+        // التحقق من دعم التثبيت
+        window.addEventListener('load', () => {
+            if (
+                (navigator.standalone || 
+                window.matchMedia('(display-mode: standalone)').matches) === false
+            ) {
+                document.getElementById('installContainer').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

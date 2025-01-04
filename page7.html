@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منوعات</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #64b5f6;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #1976D2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #1565C0;
+        }
+
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .audio-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #333333;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .audio-item:hover {
+            background-color: #404040;
+        }
+
+        .audio-item.playing {
+            background-color: #1e3a5f;
+        }
+
+        .audio-info {
+            flex-grow: 1;
+        }
+
+        .audio-title {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .audio-number {
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .audio-time {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            text-align: left;
+        }
+
+        .audio-format {
+            font-size: 0.8em;
+            color: #81c784;
+            margin-top: 2px;
+            font-weight: bold;
+        }
+
+        .now-playing {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #2a2a2a;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #ffffff;
+        }
+
+        .now-playing-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #2196F3;
+            border-radius: 3px;
+            width: 0;
+        }
+
+        .play-button, .pause-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            color: #2196F3;
+            transition: color 0.3s;
+        }
+
+        .play-button:hover, .pause-button:hover {
+            color: #1976D2;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .audio-item {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" style="margin-left: 8px;">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+            </svg>
+            العودة للصفحة الرئيسية
+        </a>
+        <h1>منوعات</h1>
+        <div id="audioList" class="audio-list">
+            <!-- سيتم إضافة عناصر الصوت هنا -->
+        </div>
+    </div>
+
+    <div class="now-playing">
+        <div class="now-playing-info">
+            <span class="now-playing-title">لا يوجد شيء قيد التشغيل</span>
+            <span class="current-time">00:00</span> / <span class="total-time">00:00</span>
+        </div>
+        <div id="progressContainer" class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentAudio = null;
+        let currentAudioItem = null;
+        let isPlaying = false;
+
+        // تحميل قائمة الملفات الصوتية عند تحميل الصفحة
+        window.addEventListener('load', loadAudioFiles);
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            seconds = Math.floor(seconds % 60);
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        async function loadAudioFiles() {
+            try {
+                const response = await fetch('list-audio-files-monawat.php');
+                const files = await response.json();
+                const audioList = document.getElementById('audioList');
+                
+                // مسح المحتوى السابق
+                audioList.innerHTML = '';
+                
+                files.forEach((file, index) => {
+                    // تنظيف اسم الملف وإزالة الامتداد
+                    const fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+                    const displayName = fileName.replace(/_/g, ' ');
+
+                    // إنشاء عنصر في القائمة الرئيسية
+                    const item = document.createElement('div');
+                    item.className = 'audio-item';
+                    item.innerHTML = `
+                        <div class="audio-info">
+                            <div class="audio-title">${displayName}</div>
+                            <div class="audio-number">درس ${index + 1}</div>
+                            <div class="audio-time">00:00 / 00:00</div>
+                            <div class="audio-format">${file.extension.toUpperCase()}</div>
+                        </div>
+                        <div class="audio-controls">
+                            <button class="play-button" onclick="playAudio(${index}, ${files.length})">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button class="pause-button" onclick="pauseAudio(${index})">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    audioList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل الملفات الصوتية:', error);
+                const audioList = document.getElementById('audioList');
+                audioList.innerHTML = '<div class="error-message">عذراً، حدث خطأ في تحميل الملفات الصوتية</div>';
+            }
+        }
+
+        function pauseAudio(index) {
+            if (currentAudio && currentAudioItem === document.querySelectorAll('.audio-item')[index]) {
+                currentAudio.pause();
+                currentAudioItem.classList.remove('playing');
+                isPlaying = false;
+            }
+        }
+
+        async function playAudio(index, total) {
+            try {
+                const response = await fetch('list-audio-files-monawat.php');
+                const files = await response.json();
+                const file = files[index];
+                
+                if (!file) {
+                    console.error('الملف غير موجود');
+                    return;
+                }
+
+                // إذا كان نفس الملف يعمل، قم بإعادة تشغيله
+                if (currentAudio && currentAudioItem === document.querySelectorAll('.audio-item')[index]) {
+                    currentAudio.play();
+                    currentAudioItem.classList.add('playing');
+                    isPlaying = true;
+                    return;
+                }
+
+                // إيقاف الصوت الحالي إذا كان يعمل
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+
+                // إزالة التحديد من العنصر السابق
+                if (currentAudioItem) {
+                    currentAudioItem.classList.remove('playing');
+                }
+
+                // تحديث العناصر الحالية
+                const audioItems = document.querySelectorAll('.audio-item');
+                currentAudioItem = audioItems[index];
+                
+                // إضافة تأثير التشغيل
+                currentAudioItem.classList.add('playing');
+
+                // إنشاء عنصر الصوت الجديد
+                currentAudio = new Audio(file.path);
+                
+                // تحديث مدة الملف الصوتي عند تحميله
+                currentAudio.addEventListener('loadedmetadata', () => {
+                    const duration = formatTime(currentAudio.duration);
+                    currentAudioItem.querySelector('.audio-time').textContent = `00:00 / ${duration}`;
+                    document.querySelector('.total-time').textContent = duration;
+                });
+
+                currentAudio.addEventListener('timeupdate', () => {
+                    // تحديث الوقت الحالي
+                    const currentTime = formatTime(currentAudio.currentTime);
+                    const duration = formatTime(currentAudio.duration);
+                    currentAudioItem.querySelector('.audio-time').textContent = `${currentTime} / ${duration}`;
+                    document.querySelector('.current-time').textContent = currentTime;
+                    
+                    // تحديث شريط التقدم
+                    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    document.querySelector('.progress-bar').style.width = `${progress}%`;
+                });
+
+                currentAudio.addEventListener('ended', () => {
+                    // تشغيل الملف التالي عند الانتهاء
+                    if (index < total - 1) {
+                        playAudio(index + 1, total);
+                    } else {
+                        // إذا كان آخر ملف، قم بإزالة تأثير التشغيل
+                        currentAudioItem.classList.remove('playing');
+                        isPlaying = false;
+                    }
+                });
+
+                // تحديث معلومات التشغيل الحالي
+                const fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+                const displayName = fileName.replace(/_/g, ' ');
+                document.querySelector('.now-playing-title').textContent = displayName;
+                
+                // تشغيل الصوت
+                currentAudio.play();
+                isPlaying = true;
+
+                // إضافة وظيفة تحديث الوقت عند النقر على شريط التقدم
+                const progressContainer = document.getElementById('progressContainer');
+                progressContainer.addEventListener('click', (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const clickPosition = (e.clientX - rect.left) / rect.width;
+                    currentAudio.currentTime = clickPosition * currentAudio.duration;
+                });
+                
+            } catch (error) {
+                console.error('خطأ في تشغيل الملف الصوتي:', error);
+                alert('عذراً، حدث خطأ في تشغيل الملف الصوتي');
+            }
+        }
+    </script>
+</body>
+</html>

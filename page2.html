@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دروس الفقه</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 95%;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .controls-group {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #4CAF50;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-button:hover {
+            background: rgba(76, 175, 80, 0.2);
+            transform: scale(1.1);
+        }
+
+        .back-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .audio-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .audio-item.playing {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .play-button, .pause-button {
+            background: none;
+            border: none;
+            color: #4CAF50;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-button:hover, .pause-button:hover {
+            background: rgba(76, 175, 80, 0.2);
+            transform: scale(1.1);
+        }
+
+        .play-button svg, .pause-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .audio-item.playing .play-button {
+            display: none;
+        }
+
+        .audio-item:not(.playing) .pause-button {
+            display: none;
+        }
+
+        .audio-info {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .audio-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .audio-number {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .audio-time {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .audio-format {
+            font-size: 0.8em;
+            color: #4CAF50;
+            margin-top: 2px;
+        }
+
+        .now-playing {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .now-playing-info {
+            flex-grow: 1;
+        }
+
+        .now-playing-title {
+            margin-bottom: 5px;
+            color: #4CAF50;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+            direction: ltr;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 2px;
+            width: 0;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="controls-group">
+                <a href="index.html" class="back-button" title="رجوع">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+            <h1>دروس الفقه</h1>
+        </div>
+        <div class="audio-list" id="audioList">
+            <!-- سيتم إضافة العناصر ديناميكياً -->
+        </div>
+    </div>
+
+    <div class="now-playing" id="nowPlaying">
+        <div class="play-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="now-playing-info">
+            <div class="now-playing-title">جاري التشغيل...</div>
+            <div class="time-display">
+                <span class="current-time">00:00</span>
+                <span class="total-time">00:00</span>
+            </div>
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAudio = null;
+        let currentAudioItem = null;
+        let isPlaying = false;
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        async function loadAudioFiles() {
+            try {
+                const response = await fetch('list-audio-files-fiqh.php');
+                const files = await response.json();
+                const audioList = document.getElementById('audioList');
+                
+                // مسح المحتوى السابق
+                audioList.innerHTML = '';
+                
+                files.forEach((file, index) => {
+                    // تنظيف اسم الملف وإزالة الامتداد
+                    const fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+                    const displayName = fileName.replace(/_/g, ' ');
+
+                    // إنشاء عنصر في القائمة الرئيسية
+                    const item = document.createElement('div');
+                    item.className = 'audio-item';
+                    item.innerHTML = `
+                        <div class="audio-info">
+                            <div class="audio-title">${displayName}</div>
+                            <div class="audio-number">درس ${index + 1}</div>
+                            <div class="audio-time">00:00 / 00:00</div>
+                            <div class="audio-format">${file.extension.toUpperCase()}</div>
+                        </div>
+                        <div class="audio-controls">
+                            <button class="play-button" onclick="playAudio(${index}, ${files.length})">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button class="pause-button" onclick="pauseAudio(${index})">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    audioList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل الملفات الصوتية:', error);
+                const audioList = document.getElementById('audioList');
+                audioList.innerHTML = '<div class="error-message">عذراً، حدث خطأ في تحميل الملفات الصوتية</div>';
+            }
+        }
+
+        function pauseAudio(index) {
+            if (currentAudio) {
+                currentAudio.pause();
+                isPlaying = false;
+                if (currentAudioItem) {
+                    currentAudioItem.classList.remove('playing');
+                }
+            }
+        }
+
+        async function playAudio(index, total) {
+            try {
+                const response = await fetch('list-audio-files-fiqh.php');
+                const files = await response.json();
+                const file = files[index];
+                
+                if (!file) {
+                    console.error('الملف غير موجود');
+                    return;
+                }
+
+                // إذا كان نفس الملف يعمل، قم بإعادة تشغيله
+                if (currentAudio && currentAudioItem === document.querySelectorAll('.audio-item')[index]) {
+                    currentAudio.play();
+                    currentAudioItem.classList.add('playing');
+                    isPlaying = true;
+                    return;
+                }
+
+                // إيقاف الصوت الحالي إذا كان يعمل
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+
+                // إزالة التحديد من العنصر السابق
+                if (currentAudioItem) {
+                    currentAudioItem.classList.remove('playing');
+                }
+
+                // تحديث العناصر الحالية
+                const audioItems = document.querySelectorAll('.audio-item');
+                currentAudioItem = audioItems[index];
+                
+                // إضافة تأثير التشغيل
+                currentAudioItem.classList.add('playing');
+
+                // إنشاء عنصر الصوت الجديد
+                currentAudio = new Audio(file.path);
+                
+                // تحديث مدة الملف الصوتي عند تحميله
+                currentAudio.addEventListener('loadedmetadata', () => {
+                    const duration = formatTime(currentAudio.duration);
+                    currentAudioItem.querySelector('.audio-time').textContent = `00:00 / ${duration}`;
+                    document.querySelector('.total-time').textContent = duration;
+                });
+
+                currentAudio.addEventListener('timeupdate', () => {
+                    // تحديث الوقت الحالي
+                    const currentTime = formatTime(currentAudio.currentTime);
+                    const duration = formatTime(currentAudio.duration);
+                    currentAudioItem.querySelector('.audio-time').textContent = `${currentTime} / ${duration}`;
+                    document.querySelector('.current-time').textContent = currentTime;
+                    
+                    // تحديث شريط التقدم
+                    const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    document.querySelector('.progress-bar').style.width = `${progress}%`;
+                });
+
+                currentAudio.addEventListener('ended', () => {
+                    // تشغيل الملف التالي عند الانتهاء
+                    if (index < total - 1) {
+                        playAudio(index + 1, total);
+                    } else {
+                        // إذا كان آخر ملف، قم بإزالة تأثير التشغيل
+                        currentAudioItem.classList.remove('playing');
+                        isPlaying = false;
+                    }
+                });
+
+                // تحديث معلومات التشغيل الحالي
+                const fileName = file.name.substring(0, file.name.lastIndexOf('.'));
+                const displayName = fileName.replace(/_/g, ' ');
+                document.querySelector('.now-playing-title').textContent = displayName;
+                
+                // تشغيل الصوت
+                currentAudio.play();
+                isPlaying = true;
+
+                // إضافة وظيفة تحديث الوقت عند النقر على شريط التقدم
+                const progressContainer = document.getElementById('progressContainer');
+                progressContainer.addEventListener('click', (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const clickPosition = (e.clientX - rect.left) / rect.width;
+                    currentAudio.currentTime = clickPosition * currentAudio.duration;
+                });
+                
+            } catch (error) {
+                console.error('خطأ في تشغيل الملف الصوتي:', error);
+                alert('عذراً، حدث خطأ في تشغيل الملف الصوتي');
+            }
+        }
+
+        // تحميل قائمة الملفات عند تحميل الصفحة
+        loadAudioFiles();
+    </script>
+</body>
+</html>
